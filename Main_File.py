@@ -4,8 +4,9 @@ import requests
 """
 Data recovery from the API.
 """
-test_var = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&page_size=500&page=1&json=true&fields=product_name,nutriscore_grade,url,stores,pnns_groups_1,categories,generic_name")
-print(test_var) #Check the response of API ( ok if 200 )
+requestpost = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&page_size=500&page=1&json=true&fields=product_name,nutriscore_grade,url,pnns_groups_1,categories,generic_name")
+print(requestpost) #Check the response of API ( ok if 200 )
+response_data = requestpost.json()
 
 """
 Generating a database from the JSON data.
@@ -15,23 +16,39 @@ cnx = SQLcmd.connect(user='root', password='edgard31280', host='localhost')
 cursor = cnx.cursor()
 
 # Database creation
-DB_NAME = "db_test"
+DB_NAME = "db_project_5"
 
 cursor.execute("DROP DATABASE IF EXISTS {}".format(DB_NAME))
 cursor.execute("CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(DB_NAME))
 print("Database {} created successfully.".format(DB_NAME))
 cnx.database = DB_NAME
 
-# First test on database (table creation) with connector :
-TB_NAME = "table_test"
+# Table creation with connector :
+TB1_NAME = "table_produits"
+TB2_NAME = "table_historique"
 
 cursor.execute(
-    "CREATE TABLE `table_test` ("
-    "  `id` SMALLINT NOT NULL AUTO_INCREMENT,"
-    "  `Field_1` date NOT NULL,"
-    "  `Field_2` varchar(14) NOT NULL,"
-    "  `Field_3` varchar(16) NOT NULL,"
-    "  `Field_4` enum('M','F') NOT NULL,"
-    "  `Field_5` date NOT NULL,"
-    "  PRIMARY KEY (`id`)"
-    ") ENGINE=InnoDB")
+    "CREATE TABLE `{}` ("
+    "  `id_product` INT UNSIGNED NOT NULL AUTO_INCREMENT,"
+    "  `url` TEXT,"
+    "  `product_group` VARCHAR(60),"
+    "  `nutriscore` CHAR(1),"
+    "  `categories` TEXT,"
+    "  `product_name` VARCHAR(60),"
+    "  `generic_name` VARCHAR(70),"
+    "  PRIMARY KEY (`id_product`)"
+    ") ENGINE=InnoDB".format(TB1_NAME))
+print("Table {} created successfully.".format(TB1_NAME))
+
+# Upload data from OpenFoodFact into table table_produits:
+for product in response_data["products"]:
+    cursor.execute("INSERT INTO {}""(id_product)""VALUES (NULL)".format(TB1_NAME))
+    for field in product:
+        if field in ("categories", "generic_name", "product_name", "url") :
+            cursor.execute("INSERT INTO {}""({})""VALUES ({})".format(TB1_NAME, field, product[field]))
+        elif field == "pnns_group_1":
+            cursor.execute("INSERT INTO {}""({})""VALUES ({})".format(TB1_NAME, "product_group", product[field]))
+        elif field == "nutriscore_grade":
+            cursor.execute("INSERT INTO {}""({})""VALUES ({})".format(TB1_NAME, "nutriscore", product[field]))
+
+print(cursor.execute("SELECT * FROM table_produits"))

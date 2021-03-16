@@ -1,12 +1,18 @@
 import mysql.connector as SQLcmd
 import requests
 
+import data_checking
+
 """
 Data recovery from the API.
 """
-requestpost = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&page_size=500&page=1&json=true&fields=product_name,nutriscore_grade,url,pnns_groups_1,categories,generic_name")
-print(requestpost) #Check the response of API ( ok if 200 )
-response_data = requestpost.json()
+requestpost_products = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&page_size=500&page=1&json=true&fields=product_name,nutriscore_grade,url,pnns_groups_1,categories,generic_name")
+print(requestpost_products) #Check the response of API ( ok if 200 )
+response_data_products = requestpost_products.json()
+
+requestpost_categories = requests.get("https://fr.openfoodfacts.org/categories.json")
+print(requestpost_categories)
+response_data_categories = requestpost_categories.json()
 
 """
 Generating a database from the JSON data.
@@ -24,8 +30,9 @@ print("Database {} created successfully.".format(DB_NAME))
 cnx.database = DB_NAME
 
 # Table creation with connector :
-TB1_NAME = "table_produits"
-TB2_NAME = "table_historique"
+TB1_NAME = "product"
+TB2_NAME = "hystory"
+TB3_NAME = "categories"
 
 cursor.execute(
     "CREATE TABLE `{}` ("
@@ -40,15 +47,34 @@ cursor.execute(
     ") ENGINE=InnoDB".format(TB1_NAME))
 print("Table {} created successfully.".format(TB1_NAME))
 
-# Upload data from OpenFoodFact into table table_produits:
-for product in response_data["products"]:
-    cursor.execute("INSERT INTO {}""(id_product)""VALUES (NULL)".format(TB1_NAME))
-    for field in product:
-        if field in ("categories", "generic_name", "product_name", "url") :
-            cursor.execute("INSERT INTO {}""({})""VALUES ({})".format(TB1_NAME, field, product[field]))
-        elif field == "pnns_group_1":
-            cursor.execute("INSERT INTO {}""({})""VALUES ({})".format(TB1_NAME, "product_group", product[field]))
-        elif field == "nutriscore_grade":
-            cursor.execute("INSERT INTO {}""({})""VALUES ({})".format(TB1_NAME, "nutriscore", product[field]))
+cursor.execute(
+    "CREATE TABLE `{}` ("
+    "  `id_category` INT UNSIGNED NOT NULL AUTO_INCREMENT,"
+    "  `category_name` VARCHAR(70),"
+    "  PRIMARY KEY (`id_category`)"
+    ") ENGINE=InnoDB".format(TB3_NAME))
+print("Table {} created successfully.".format(TB3_NAME))
 
-print(cursor.execute("SELECT * FROM table_produits"))
+# Upload data from OpenFoodFact into table table_produits:
+
+#number_of_fields_TB1 = cursor.execute("SELECT count (*) FROM information_schema.columns WHERE table_name='product'")
+
+for category in response_data_categories["tags"]:
+    print(category['name'])
+    cmd = "INSERT INTO categories VALUES (%s)"
+    data_to_insert = (category['name'])
+    cursor.execute(cmd,data_to_insert)
+    cnx.commit()
+
+for product in response_data_products["products"]:
+
+    #Appeler méthode de vérification de l'existence des éléments dans le dictionnaire
+    #C'est le product traité par la méthode ci-dessus qui sera injecté dans la data
+    Check_data = data_checking.data_checking(product, number_of_fields_TB1)
+    if Check_data:
+        sql = "INSERT INTO product (url,product_group,nutriscore,categories,product_name,generic_name) VALUES (%s, %s, %s, %s, %s, %s)"
+        data = (product['url'],product['pnns_groups_1'],product['nutriscore_grade'],product['categories'],product['product_name'],product['generic_name'])
+        cursor.execute(sql,data)
+        cnx.commit()
+    else:
+        pass

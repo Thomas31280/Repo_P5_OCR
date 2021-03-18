@@ -1,0 +1,3 @@
+user : root
+host : localhost
+password : edgard31280

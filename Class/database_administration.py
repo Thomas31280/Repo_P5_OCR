@@ -1,9 +1,9 @@
 import mysql.connector as SQLcmd
 from mysql.connector import errorcode
 
-import constant_storage
-import tables
-import data_checking
+from . import constant_storage
+from . import tables
+from . import data_checking
 
 class Database:
 
@@ -49,8 +49,6 @@ class Database:
                 print("OK")
         
         connexion.commit()
-        cursor.close()
-        connexion.close()
     
     @classmethod
     def load_products_in_table(cls, data_json, connexion, cursor):
@@ -61,7 +59,17 @@ class Database:
             if Check_data:
                 sql = "INSERT INTO product (url,product_group,nutriscore,categories,product_name,generic_name) VALUES (%s, %s, %s, %s, %s, %s)"
                 data = (product['url'],product['pnns_groups_1'],product['nutriscore_grade'],product['categories'],product['product_name'],product['generic_name'])
-                cursor.execute(sql,data)
+                cursor.execute(sql, data)
                 connexion.commit()
             else:
                 pass
+    
+    @classmethod
+    def load_categories_in_table(cls, connexion, cursor):
+
+        with open("categories.txt") as cat:
+            for line in cat:
+                sql = "INSERT INTO categories (category_name) VALUES (%s)"
+                data = (line, )
+                cursor.execute(sql, data)
+                connexion.commit()

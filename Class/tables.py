@@ -6,8 +6,8 @@ TABLES['product'] = (
     "  `product_group` VARCHAR(60),"
     "  `nutriscore` CHAR(1),"
     "  `categories` TEXT,"
-    "  `product_name` VARCHAR(60),"
-    "  `generic_name` VARCHAR(70),"
+    "  `product_name` VARCHAR(150),"
+    "  `generic_name` VARCHAR(200),"
     "  PRIMARY KEY (`id_product`)"
     ") ENGINE=InnoDB")
 

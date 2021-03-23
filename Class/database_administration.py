@@ -1,9 +1,10 @@
 import mysql.connector as SQLcmd
 from mysql.connector import errorcode
 
-from . import constant_storage
-from . import tables
-from . import data_checking
+import constant_storage
+import tables
+import data_checking
+from . import http_requests
 
 class Database:
 
@@ -50,19 +51,25 @@ class Database:
         
         connexion.commit()
     
+
     @classmethod
-    def load_products_in_table(cls, data_json, connexion, cursor):
+    def load_products_in_table(cls, connexion, cursor):
 
-        for product in data_json["products"]:
+        with open("html_requests.txt") as req:
+            for line in req:
+                response_data_products = http_requests.Requests.get_data_from_api(line)
+        
+                for product in response_data_products["products"]:
 
-            Check_data = data_checking.data_checking(product, 7)
-            if Check_data:
-                sql = "INSERT INTO product (url,product_group,nutriscore,categories,product_name,generic_name) VALUES (%s, %s, %s, %s, %s, %s)"
-                data = (product['url'],product['pnns_groups_1'],product['nutriscore_grade'],product['categories'],product['product_name'],product['generic_name'])
-                cursor.execute(sql, data)
-                connexion.commit()
-            else:
-                pass
+                    Check_data = data_checking.data_checking(product, 5)
+                    if Check_data:
+                        sql = "INSERT INTO product (url,product_group,categories,product_name) VALUES (%s, %s, %s, %s)"
+                        data = (product['url'],product['pnns_groups_1'],product['categories'],product['product_name'])
+                        cursor.execute(sql, data)
+                        connexion.commit()
+                    else:
+                        pass
+        
     
     @classmethod
     def load_categories_in_table(cls, connexion, cursor):

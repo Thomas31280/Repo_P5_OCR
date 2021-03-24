@@ -55,54 +55,20 @@ class Database:
     @classmethod
     def load_products_in_table(cls, connexion, cursor):
 
-        # with open("html_requests.txt") as req:
-        #     for line in req:
-        #         response_data_products = http_requests.Requests.get_data_from_api(line)
+        with open("html_requests.txt") as req:
+            for line in req:
+                response_data_products = http_requests.Requests.get_data_from_api(line)
         
-        #         for product in response_data_products["products"]:
+                for product in response_data_products["products"]:
 
-        #             Check_data = data_checking.data_checking(product, 5)
-        #             if Check_data:
-        #                 sql = "INSERT INTO product (url,product_group,categories,product_name) VALUES (%s, %s, %s, %s)"
-        #                 data = (product['url'],product['pnns_groups_1'],product['categories'],product['product_name'])
-        #                 cursor.execute(sql, data)
-        #                 connexion.commit()
-        #             else:
-        #                 pass
-        response_data_products1 = http_requests.Requests.get_data_from_api("https://fr.openfoodfacts.org/cgi/search.pl?action=process&page_size=120&page=1&categories=Viennoiseries&json=true&fields=product_name,url,pnns_groups_1,categories")
-        response_data_products2 = http_requests.Requests.get_data_from_api("https://fr.openfoodfacts.org/cgi/search.pl?action=process&page_size=120&page=1&categories=Biscuits&json=true&fields=product_name,url,pnns_groups_1,categories")
-        response_data_products3 = http_requests.Requests.get_data_from_api("https://fr.openfoodfacts.org/cgi/search.pl?action=process&page_size=120&page=1&categories=Chocolats&json=true&fields=product_name,url,pnns_groups_1,categories")
-        response_data_products4 = http_requests.Requests.get_data_from_api("https://fr.openfoodfacts.org/cgi/search.pl?action=process&page_size=120&page=1&categories=Brioches&json=true&fields=product_name,url,pnns_groups_1,categories")
-        for product in response_data_products2["products"]:
-
-            Check_data = data_checking.data_checking(product, 5)
-            if Check_data:
-                sql = "INSERT INTO product (url,product_group,categories,product_name) VALUES (%s, %s, %s, %s)"
-                data = (product['url'],product['pnns_groups_1'],product['categories'],product['product_name'])
-                cursor.execute(sql, data)
-                connexion.commit()
-            else:
-                pass
-        for product in response_data_products1["products"]:
-
-            Check_data = data_checking.data_checking(product, 5)
-            if Check_data:
-                sql = "INSERT INTO product (url,product_group,categories,product_name) VALUES (%s, %s, %s, %s)"
-                data = (product['url'],product['pnns_groups_1'],product['categories'],product['product_name'])
-                cursor.execute(sql, data)
-                connexion.commit()
-            else:
-                pass
-        for product in response_data_products3["products"]:
-
-            Check_data = data_checking.data_checking(product, 5)
-            if Check_data:
-                sql = "INSERT INTO product (url,product_group,categories,product_name) VALUES (%s, %s, %s, %s)"
-                data = (product['url'],product['pnns_groups_1'],product['categories'],product['product_name'])
-                cursor.execute(sql, data)
-                connexion.commit()
-            else:
-                pass
+                    Check_data = data_checking.data_checking(product, 5)
+                    if Check_data:
+                        sql = "INSERT INTO product (url,product_group,categories,product_name) VALUES (%s, %s, %s, %s)"
+                        data = (product['url'],product['pnns_groups_1'],product['categories'],product['product_name'])
+                        cursor.execute(sql, data)
+                        connexion.commit()
+                    else:
+                        pass
     
     @classmethod
     def load_categories_in_table(cls, connexion, cursor):

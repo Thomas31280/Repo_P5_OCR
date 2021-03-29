@@ -1,6 +1,5 @@
 import mysql.connector as SQLcmd
 
-import data_checking
 from Class import http_requests
 from Class import database_administration
 import constant_storage
@@ -29,7 +28,6 @@ database_administration.Database.table_creation(cursor, cnx)
 # Upload data from OpenFoodFact into table table_produits:
 
 database_administration.Database.load_categories_in_table(cnx, cursor)
-
 database_administration.Database.load_products_in_table(cnx, cursor)
-
 user = user.User()
+user.user_main_page(cursor)

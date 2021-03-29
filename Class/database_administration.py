@@ -3,7 +3,6 @@ from mysql.connector import errorcode
 
 import constant_storage
 import tables
-import data_checking
 from . import http_requests
 
 class Database:
@@ -58,25 +57,23 @@ class Database:
         with open("html_requests.txt") as req:
             for line in req:
                 response_data_products = http_requests.Requests.get_data_from_api(line)
-        
                 for product in response_data_products["products"]:
 
-                    Check_data = data_checking.data_checking(product, 5)
-                    if Check_data:
+                    try:
                         sql = "INSERT INTO product (url,product_group,categories,product_name) VALUES (%s, %s, %s, %s)"
                         data = (product['url'],product['pnns_groups_1'],product['categories'],product['product_name'])
                         cursor.execute(sql, data)
                         connexion.commit()
-                    else:
-                        pass
+                    except Exception as e:
+                        print("error : ", e, product['product_name'])
+
     
     @classmethod
     def load_categories_in_table(cls, connexion, cursor):
 
-        with open("categories.txt") as cat:
-            for line in cat:
-                sql = "INSERT INTO category (category_name) VALUES (%s)"
-                data = (line, )
-                cursor.execute(sql, data)
-                connexion.commit()
+        for category in constant_storage.CATEGORIES:
+            sql = "INSERT INTO category (category_name) VALUES (%s)"
+            data = (category, )
+            cursor.execute(sql, data)
+            connexion.commit()
     

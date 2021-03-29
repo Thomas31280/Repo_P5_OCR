@@ -18,3 +18,12 @@ TABLES['product'] = (
     "  PRIMARY KEY (`id_product`),"
     "  CONSTRAINT fk_categories_category_name FOREIGN KEY (`categories`) REFERENCES category(`category_name`)"
     ") ENGINE=InnoDB")
+
+TABLES['favorites'] = (
+    "CREATE TABLE `favorites` ("
+    "  `id_product` INT UNSIGNED NOT NULL UNIQUE,"
+    "  `url` TEXT,"
+    "  `categories` VARCHAR(60),"
+    "  `product_name` VARCHAR(150),"
+    "  PRIMARY KEY (`id_product`)"
+    ") ENGINE=InnoDB")

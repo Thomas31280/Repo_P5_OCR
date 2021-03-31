@@ -3,7 +3,6 @@ import mysql.connector as SQLcmd
 from Class import http_requests
 from Class import database_administration
 import constant_storage
-from Class import user
 
 """
 Data recovery from the API.
@@ -29,5 +28,3 @@ database_administration.Database.table_creation(cursor, cnx)
 
 database_administration.Database.load_categories_in_table(cnx, cursor)
 database_administration.Database.load_products_in_table(cnx, cursor)
-user = user.User()
-user.user_main_page(cursor)

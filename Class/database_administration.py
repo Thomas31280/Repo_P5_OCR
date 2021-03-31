@@ -60,12 +60,30 @@ class Database:
                 for product in response_data_products["products"]:
 
                     try:
-                        sql = "INSERT INTO product (url,product_group,categories,product_name) VALUES (%s, %s, %s, %s)"
-                        data = (product['url'],product['pnns_groups_1'],product['categories'],product['product_name'])
+                        sql = "INSERT INTO product (url,product_group,categories,product_name,nutriscore, stores) VALUES (%s, %s, %s, %s, %s, %s)"
+                        data = (product['url'],product['pnns_groups_1'],product['categories'],product['product_name'], product['nutriscore_grade'], product['stores'])
                         cursor.execute(sql, data)
                         connexion.commit()
                     except Exception as e:
-                        print("error : ", e, product['product_name'])
+                        try:
+                            sql = "INSERT INTO product (url,product_group,categories,product_name,nutriscore, stores) VALUES (%s, %s, %s, %s, %s, %s)"
+                            data = (product['url'],product['pnns_groups_1'],product['categories'],product['product_name'], None, product['stores'])
+                            cursor.execute(sql, data)
+                            connexion.commit()
+                        except Exception as e:
+                            try:
+                                sql = "INSERT INTO product (url,product_group,categories,product_name,nutriscore, stores) VALUES (%s, %s, %s, %s, %s, %s)"
+                                data = (product['url'],product['pnns_groups_1'],product['categories'],product['product_name'], product['nutriscore_grade'], None)
+                                cursor.execute(sql, data)
+                                connexion.commit()
+                            except Exception as e:
+                                try:
+                                    sql = "INSERT INTO product (url,product_group,categories,product_name,nutriscore, stores) VALUES (%s, %s, %s, %s, %s, %s)"
+                                    data = (product['url'],product['pnns_groups_1'],product['categories'],product['product_name'], None, None)
+                                    cursor.execute(sql, data)
+                                    connexion.commit()
+                                except Exception as e:
+                                    print("error : ", e, product['product_name'])
 
     
     @classmethod

@@ -15,6 +15,8 @@ TABLES['product'] = (
     "  `product_group` VARCHAR(60),"
     "  `categories` VARCHAR(60),"
     "  `product_name` VARCHAR(150),"
+    "  `nutriscore` CHAR(1),"
+    "  `stores` VARCHAR(30),"
     "  PRIMARY KEY (`id_product`),"
     "  CONSTRAINT fk_categories_category_name FOREIGN KEY (`categories`) REFERENCES category(`category_name`)"
     ") ENGINE=InnoDB")

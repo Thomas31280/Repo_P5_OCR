@@ -27,5 +27,7 @@ TABLES['favorites'] = (
     "  `url` TEXT,"
     "  `categories` VARCHAR(60),"
     "  `product_name` VARCHAR(150),"
+    "  `nutriscore` CHAR(1),"
+    "  `stores` VARCHAR(30),"
     "  PRIMARY KEY (`id_product`)"
     ") ENGINE=InnoDB")

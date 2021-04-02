@@ -7,4 +7,4 @@ cursor = cnx.cursor()
 
 database_administration.Database.database_selection(cursor, constant_storage.DB_NAME)
 user = user.User()
-user.user_main_page(cursor)
+user.user_main_page(cursor, cnx)

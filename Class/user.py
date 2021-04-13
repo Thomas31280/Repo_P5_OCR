@@ -44,7 +44,7 @@ class User:
             
             clear()
             print("Voici la liste de vos produits sauvegardés :\n")
-            query = ("SELECT * FROM favorites")
+            query = ("SELECT product_name, nutriscore, url, stores FROM product INNER JOIN favorite ON product.id_product = favorite.id_product")
             cursor.execute(query)
             myresult = cursor.fetchall()
             
@@ -54,7 +54,7 @@ class User:
             legit_request = False
 
             while legit_request == False:
-                user_choice_5 = input("Si vous souhaitez poursuivre, tapez 1, sinon, tapez Q pour quitter le programme : ")
+                user_choice_5 = input("\nSi vous souhaitez poursuivre, tapez 1, sinon, tapez Q pour quitter le programme : ")
 
                 if user_choice_5 == "Q":
                     legit_request = True
@@ -76,7 +76,7 @@ class User:
         clear()
         id_products_returned = []
         
-        query = ("SELECT id_product, product_name FROM product INNER JOIN category ON product.categories = category.category_name WHERE category.id_category = %s")
+        query = ("SELECT id_product, product_name FROM product INNER JOIN category ON product.product_group = category.category_name WHERE category.id_category = %s")
         answer = (int(user_choice), )
         cursor.execute(query, answer)
         myresult = cursor.fetchall()
@@ -113,12 +113,12 @@ class User:
 
         if nutriscore_product == None:
             print("\nLe produit que vous avez sélectionné ne possède pas d'information liée à son nutriscore. Par défaut, nous vous proposons les produits de sa catégorie pour lesquels aucune information de nutriscore existe :\n")
-            query = ("SELECT id_product, product_name, stores, url FROM product INNER JOIN category ON product.categories = category.category_name WHERE category.id_category = %s AND product.nutriscore IS NULL")
+            query = ("SELECT id_product, product_name, stores, url FROM product INNER JOIN category ON product.product_group = category.category_name WHERE category.id_category = %s AND product.nutriscore IS NULL")
             answer = (int(user_choice), )
 
         else:
             answer = (int(user_choice), nutriscore_product)
-            query = ("SELECT id_product, product_name, stores, url FROM product INNER JOIN category ON product.categories = category.category_name WHERE category.id_category = %s AND product.nutriscore <= %s")
+            query = ("SELECT id_product, product_name, stores, url FROM product INNER JOIN category ON product.product_group = category.category_name WHERE category.id_category = %s AND product.nutriscore <= %s")
 
         cursor.execute(query, answer)
         myresult = cursor.fetchall()
@@ -150,7 +150,7 @@ class User:
         neutral_cursor = cursor
         legit_request = False
         
-        query = ("INSERT INTO favorites (id_product,url,categories,product_name,nutriscore,stores) SELECT id_product,url,categories,product_name,nutriscore,stores FROM product WHERE product.id_product = %s")
+        query = ("INSERT INTO favorite (id_product) SELECT id_product FROM product WHERE product.id_product = %s")
         id_product = (int(product_id), )
         
         try:

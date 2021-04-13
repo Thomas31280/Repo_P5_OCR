@@ -13,21 +13,16 @@ TABLES['product'] = (
     "  `id_product` INT UNSIGNED NOT NULL AUTO_INCREMENT,"
     "  `url` TEXT,"
     "  `product_group` VARCHAR(60),"
-    "  `categories` VARCHAR(60),"
-    "  `product_name` VARCHAR(150),"
+    "  `categories` TEXT,"
+    "  `product_name` TEXT,"
     "  `nutriscore` CHAR(1),"
     "  `stores` VARCHAR(30),"
     "  PRIMARY KEY (`id_product`),"
-    "  CONSTRAINT fk_categories_category_name FOREIGN KEY (`categories`) REFERENCES category(`category_name`)"
+    "  CONSTRAINT fk_categories_category_name FOREIGN KEY (`product_group`) REFERENCES category(`category_name`)"
     ") ENGINE=InnoDB")
 
-TABLES['favorites'] = (
-    "CREATE TABLE `favorites` ("
-    "  `id_product` INT UNSIGNED NOT NULL UNIQUE,"
-    "  `url` TEXT,"
-    "  `categories` VARCHAR(60),"
-    "  `product_name` VARCHAR(150),"
-    "  `nutriscore` CHAR(1),"
-    "  `stores` VARCHAR(30),"
+TABLES['favorite'] = (
+    "CREATE TABLE `favorite` ("
+    "  `id_product` INT UNSIGNED NOT NULL,"
     "  PRIMARY KEY (`id_product`)"
     ") ENGINE=InnoDB")

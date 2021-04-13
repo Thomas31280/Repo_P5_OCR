@@ -83,7 +83,7 @@ class Database:
                                     cursor.execute(sql, data)
                                     connexion.commit()
                                 except Exception as e:
-                                    print("error : ", e, product['product_name'])
+                                    pass
 
     
     @classmethod

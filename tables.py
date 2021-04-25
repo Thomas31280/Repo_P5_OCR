@@ -7,7 +7,7 @@ TABLES['category'] = (
     "  PRIMARY KEY (`id_category`),"
     "  INDEX ind_category (`category_name`)"
     ") ENGINE=InnoDB")
-    
+
 TABLES['product'] = (
     "CREATE TABLE `product` ("
     "  `id_product` INT UNSIGNED NOT NULL AUTO_INCREMENT,"
@@ -18,11 +18,14 @@ TABLES['product'] = (
     "  `nutriscore` CHAR(1),"
     "  `stores` VARCHAR(30),"
     "  PRIMARY KEY (`id_product`),"
-    "  CONSTRAINT fk_categories_category_name FOREIGN KEY (`product_group`) REFERENCES category(`category_name`)"
+    "  CONSTRAINT fk_categories_category_name FOREIGN KEY (`product_group`)"
+    "  REFERENCES category(`category_name`)"
     ") ENGINE=InnoDB")
 
 TABLES['favorite'] = (
     "CREATE TABLE `favorite` ("
     "  `id_product` INT UNSIGNED NOT NULL,"
-    "  PRIMARY KEY (`id_product`)"
+    "  PRIMARY KEY (`id_product`),"
+    "  CONSTRAINT fk_id_product FOREIGN KEY (`id_product`)"
+    "  REFERENCES product(`id_product`)"
     ") ENGINE=InnoDB")
